@@ -23,19 +23,6 @@ function init() {
   renderer.autoClear = false;
   document.body.appendChild(renderer.domElement);
 
-  orthoScene = new THREE.Scene();
-  orthoCamera = new THREE.OrthographicCamera(w/-2, w/2, h/2, h/-2, 0, 5000);
-  orthoCamera.position.set(0, 0, 0);
-
-  var spriteMaterial = new THREE.SpriteMaterial({
-    map: loader.load('img/36.jpg'),
-  });
-  var sprite = new THREE.Sprite(spriteMaterial);
-  sprite.position.set(w/-3,h/3,0);
-  sprite.scale.set(w/3,h/4);
-  orthoScene.add(sprite);
-
-
   perScene = new THREE.Scene();
   perCamera = new THREE.PerspectiveCamera(60, w/h, 0.1, 1000);
   perCamera.position.set(150, 150, 150);
@@ -58,15 +45,35 @@ function init() {
 
   perScene.add(sphereMesh);
 
-
+  /*2d元素*/
+  //overlay2d();
+  /*纹理地板*/
   addFloor()
+  /*用动态的canvas做纹理*/
   canvasTexture();
+  /*用video做动态纹理*/
+  //videoTexture();
   initControls();
   render();
   
 }
 
-/*用动态的canvas做纹理*/
+
+function overlay2d() {
+  orthoScene = new THREE.Scene();
+  orthoCamera = new THREE.OrthographicCamera(w/-2, w/2, h/2, h/-2, 0, 5000);
+  orthoCamera.position.set(0, 0, 0);
+
+  var spriteMaterial = new THREE.SpriteMaterial({
+    map: loader.load('img/36.jpg'),
+  });
+  var sprite = new THREE.Sprite(spriteMaterial);
+  sprite.position.set(w/-3,h/3,0);
+  sprite.scale.set(w/3,h/4);
+  orthoScene.add(sprite);
+}
+
+
 function canvasTexture() {
   var canvas = document.createElement('canvas');
   canvas.width = canvas.height = 512;
@@ -81,6 +88,22 @@ function canvasTexture() {
   canvasMesh.position.y = 40;
   canvasMesh.name = 'canvasMesh';
   perScene.add(canvasMesh);
+}
+
+function videoTexture() {
+  var video = document.getElementById('video');
+  videoTexture = new THREE.Texture(video);
+
+  var videoMesh = new THREE.Mesh(new THREE.CubeGeometry(100, 60, 2),
+    new THREE.MeshLambertMaterial({
+      map: videoTexture,
+    })
+  )
+  videoMesh.name = 'videoMesh';
+  videoMesh.position.set(50, 50, 100);
+  videoMesh.rotation.set(-Math.PI/3, Math.PI/8, 0);
+  perScene.add(videoMesh);
+
 }
 
 function include(path) {
@@ -120,12 +143,13 @@ function render() {
   s.position.y = 100 * Math.sin(theta);
 
   perScene.getObjectByName('canvasMesh').material.map.needsUpdate = true;
+  //perScene.getObjectByName('videoMesh').material.map.needsUpdate = true;
 
   //perCamera.lookAt(s.position);
   renderer.clear();
   renderer.render(perScene, perCamera);
-  renderer.clearDepth();
-  renderer.render(orthoScene, orthoCamera);
+  //renderer.clearDepth();
+  //renderer.render(orthoScene, orthoCamera);
 
   requestAnimationFrame(render);
 }
