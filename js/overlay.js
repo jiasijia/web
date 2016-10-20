@@ -25,7 +25,7 @@ function init() {
 
   perScene = new THREE.Scene();
   perCamera = new THREE.PerspectiveCamera(60, w/h, 0.1, 1000);
-  perCamera.position.set(150, 150, 150);
+  perCamera.position.set(350, 350, 350);
   perCamera.lookAt(perScene.position);
 
   light = new THREE.DirectionalLight();
@@ -53,6 +53,8 @@ function init() {
   canvasTexture();
   /*用video做动态纹理*/
   //videoTexture();
+  /*多种材质*/
+  multiMaterial();
   initControls();
   render();
   
@@ -73,10 +75,27 @@ function overlay2d() {
   orthoScene.add(sprite);
 }
 
+function multiMaterial() {
+  var g = new THREE.CylinderGeometry(10, 20, 50, 10);
+  var materialL = new THREE.MeshLambertMaterial({
+    color: 'purple',
+    transparent: true,
+    opacity: 0.5,
+  });
+  var materialP = new THREE.MeshLambertMaterial({
+    wireframe: true,
+    color: 'green',
+  })
+  var mesh = new THREE.SceneUtils.createMultiMaterialObject(g, [materialL, materialP]);
+  //var mesh = new THREE.Mesh(g, new THREE.MultiMaterial([materialL, materialP]));
+  mesh.position.set(-50, 50, 0);
+  perScene.add(mesh);
+}
 
 function canvasTexture() {
   var canvas = document.createElement('canvas');
-  canvas.width = canvas.height = 512;
+  canvas.width = 512
+  canvas.height = 512;
 
   clock(canvas);
 
