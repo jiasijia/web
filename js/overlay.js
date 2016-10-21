@@ -1,5 +1,6 @@
 include('js/lib/clock.js');
 include('js/lib/OrbitControls.js');
+include('js/lib/OBJLoader.js');
 
 window.requestAnimationFrame = (function(){
 return  window.requestAnimationFrame       ||
@@ -21,7 +22,7 @@ function init() {
   renderer.setSize(w, h);
   renderer.setClearColor(0x000000);
   renderer.autoClear = false;
-  renderer.shadowMapEnabled = true;
+  renderer.shadowMap.enabled = true;
   document.body.appendChild(renderer.domElement);
 
   perScene = new THREE.Scene();
@@ -29,21 +30,6 @@ function init() {
   perCamera.position.set(350, 350, 350);
   perCamera.lookAt(perScene.position);
 
-  light = new THREE.DirectionalLight();
-  light.position.set(700, 400, -500);
-  light.castShadow = true;
-  //light.lookAt(perScene.position);
-  light.shadowCameraNear = 250;
-  light.shadowCameraFar = 2000;
-  light.shadowCameraLeft = -500;
-  light.shadowCameraRight = 500;
-  light.shadowCameraTop = 500;
-  light.shadowCameraBottom = -500;
-  light.shadowMapWidth = 2048;
-  light.shadowMapHeight = 2048;
-  light.shadowCameraVisible = true;
-  light.name ='dlight';
-  perScene.add(light);
   perScene.add(new THREE.AxisHelper(500));
 
   var sphere = new THREE.SphereGeometry(30, 10, 10);
@@ -57,6 +43,8 @@ function init() {
   sphereMesh.castShadow = true;
   perScene.add(sphereMesh);
 
+  /*影子*/
+  //directionLightShadow();
   /*2d元素*/
   //overlay2d();
   /*纹理地板*/
@@ -69,11 +57,60 @@ function init() {
   multiMaterial();
   /*反射*/
   //cubeMap();
+  /*类太阳光*/
+  hemiLight()
+  /*粒子*/
+  particles();
   initControls();
   render();
   
 }
 
+function particles() {
+  var go = new THREE.BoxGeometry(100, 100, 100, 20, 20, 20);
+  var pm = new THREE.PointsMaterial({
+    size: 2,
+    color: Math.random() * 0xffffff,
+    transparent: true,
+    blending: THREE.AdditiveBlending,
+  });
+  
+  var mesh = new THREE.Points(go, pm);
+
+  mesh.position.set(200, 100, -100);
+  mesh.sizeAttenuation = true;
+  mesh.sortParticles = true;
+  perScene.add(mesh);
+
+}
+
+function directionLightShadow() {
+  light = new THREE.DirectionalLight();
+  light.position.set(700, 400, -500);
+  light.castShadow = true;
+  //light.lookAt(perScene.position);
+  light.shadow.camera.near = 250;
+  light.shadow.camera.far = 2000;
+  light.shadow.camera.left = -500;
+  light.shadow.camera.right = 500;
+  light.shadow.camera.top = 500;
+  light.shadow.camera.bottom = -500;
+  light.shadow.mapSize.width = 2048;
+  light.shadow.mapSize.height = 2048;
+  light.name ='dlight';
+  perScene.add(light);
+
+  var lc = new THREE.CameraHelper(light.shadow.camera);
+  lc.name = 'lightCamera';
+  perScene.add(lc);
+}
+
+function hemiLight() {
+  var hemiLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 0.2);
+  hemiLight.position.set(0, 500, 0);
+  hemiLight.name = 'hemiLight';
+  perScene.add(hemiLight);
+}
 
 function overlay2d() {
   orthoScene = new THREE.Scene();
@@ -92,7 +129,7 @@ function overlay2d() {
 function multiMaterial() {
   var g = new THREE.CylinderGeometry(10, 20, 50, 10);
   var materialL = new THREE.MeshLambertMaterial({
-    color: 'purple',
+    color: Math.random() * 0xffffff,
     transparent: true,
     opacity: 0.5,
   });
@@ -221,13 +258,13 @@ function render() {
   var s = perScene.getObjectByName('sphere');
   var dl = perScene.getObjectByName('dlight');
   theta += rv;
-  gama += 0.02
+  gama += 0.01
 
   s.position.x = 100 * Math.cos(theta);
   s.position.y = 25 + 50 * Math.sin(theta);
 
-  dl.position.x = 700 * Math.cos(gama);
-  dl.position.z = 700 * Math.sin(gama);
+  //dl.position.x = 700 * Math.cos(gama);
+  //dl.position.z = 700 * Math.sin(gama);
   if (theta > Math.PI || theta < 0) {
     rv = -rv;
   }
@@ -235,6 +272,7 @@ function render() {
   perScene.getObjectByName('canvasMesh').material.map.needsUpdate = true;
   //perScene.getObjectByName('videoMesh').material.map.needsUpdate = true;
   perScene.getObjectByName('separateMaterialMesh').rotation.x +=0.01;
+  //perScene.getObjectByName('lightCamera').updateProjectionMatrix();
 
   //perCamera.lookAt(s.position);
   //renderer.clear();
