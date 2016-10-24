@@ -1,6 +1,8 @@
 include('js/lib/clock.js');
 include('js/lib/OrbitControls.js');
 include('js/lib/OBJLoader.js');
+include('js/lib/stats.js');
+include('js/lib/tween.js');
 
 window.requestAnimationFrame = (function(){
 return  window.requestAnimationFrame       ||
@@ -18,6 +20,13 @@ var perScene, perCamera;
 var orthoScene, orthoCamera;
 
 function init() {
+
+  stats = new Stats();
+  stats.domElement.style.position = 'absolute';
+  stats.domElement.style.right = '0px';
+  stats.domElement.style.top = '0px';
+  document.body.appendChild(stats.domElement);
+
   renderer = new THREE.WebGLRenderer();
   renderer.setSize(w, h);
   renderer.setClearColor(0x000000);
@@ -61,15 +70,29 @@ function init() {
   hemiLight()
   /*粒子*/
   particles();
+  /*加载json模型*/
+  jsonLoader();
   initControls();
   render();
   
 }
 
+function jsonLoader() {
+  var jLoader = new THREE.JSONLoader();
+  jLoader.load('assets/model/car.js', function(geometry, materials) {
+    
+    var material = new THREE.MultiMaterial(materials);
+    car = new THREE.Mesh(geometry, material);
+    car.name = 'car';
+
+    perScene.add(car);
+  })
+}
+
 function particles() {
-  var go = new THREE.BoxGeometry(100, 100, 100, 20, 20, 20);
+  var go = new THREE.BoxGeometry(50, 50, 50, 20, 20, 20);
   var pm = new THREE.PointsMaterial({
-    size: 2,
+    size: 3,
     color: Math.random() * 0xffffff,
     transparent: true,
     blending: THREE.AdditiveBlending,
@@ -77,10 +100,40 @@ function particles() {
   
   var mesh = new THREE.Points(go, pm);
 
-  mesh.position.set(200, 100, -100);
+  mesh.position.set(0, 50, 0);
   mesh.sizeAttenuation = true;
   mesh.sortParticles = true;
+  mesh.name = 'pointMesh';
   perScene.add(mesh);
+
+  go.vertices.forEach(function(v) {
+    v.dx = Math.random() * 600 - 300;
+    v.dy = Math.random() * 600 - 300;
+    v.dz = Math.random() * 600 - 300;
+
+    v.ox = v.x;
+    v.oy = v.y;
+    v.oz = v.z;
+
+    /*v.x = v.dx;
+    v.y = v.dy;
+    v.z = v.dz;*/
+    var tween = new TWEEN.Tween({x:v.x, y:v.y, z:v.z}).to({
+      x:v.dx, 
+      y:v.dy, 
+      z:v.dz
+    }, 2000)
+    .easing(TWEEN.Easing.Bounce.InOut)
+    .onUpdate(function(){
+      v.x = this.x;
+      v.y = this.y;
+      v.z = this.z;
+    }).repeat(Infinity)
+    .yoyo(true)
+    .delay(1000)
+    .start();
+  })
+
 
 }
 
@@ -254,6 +307,8 @@ function initControls() {
 var theta = 0;
 var gama = 0;
 var rv = 0.04;
+var out = true;;
+var st = 0, et;
 function render() {
   var s = perScene.getObjectByName('sphere');
   var dl = perScene.getObjectByName('dlight');
@@ -269,6 +324,44 @@ function render() {
     rv = -rv;
   }
 
+  /*explode gemotery*/
+  var em = perScene.getObjectByName('pointMesh');
+  em.geometry.vertices.forEach(function(v) {
+    /*if (out) {
+      v.x += (v.dx - v.x) / 10;
+      v.y += (v.dy - v.y) / 10;
+      v.z += (v.dz - v.z) / 10;
+
+      if (Math.abs(v.dx - v.x) < 0.1 && Math.abs(v.dy - v.y) < 0.1 && Math.abs(v.dz - v.z) < 0.1) {
+        v.x = v.dx;
+        v.y = v.dy;
+        v.z = v.dz;
+        out = false;
+      }
+    } else {
+      v.x += (v.ox - v.x) / 10;
+      v.y += (v.oy - v.y) / 10;
+      v.z += (v.oz - v.z) / 10;
+
+      if (Math.abs(v.ox - v.x) < 0.1 && Math.abs(v.oy - v.y) < 0.1 && Math.abs(v.oz - v.z) < 0.1) {
+        v.x = v.ox;
+        v.y = v.oy;
+        v.z = v.oz;
+
+        st++;
+      }
+      if (st > 60 * em.geometry.vertices.length) {
+        out = true;
+        st = 0;
+      } 
+    }*/
+
+
+
+  })
+
+  em.geometry.verticesNeedUpdate = true;
+
   perScene.getObjectByName('canvasMesh').material.map.needsUpdate = true;
   //perScene.getObjectByName('videoMesh').material.map.needsUpdate = true;
   perScene.getObjectByName('separateMaterialMesh').rotation.x +=0.01;
@@ -280,6 +373,8 @@ function render() {
   //renderer.clearDepth();
   //renderer.render(orthoScene, orthoCamera);
 
+  stats.update();
+  TWEEN.update();
   requestAnimationFrame(render);
 }
 
