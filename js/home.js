@@ -23,6 +23,7 @@ function include(path) {
 
 var renderer, camera, scene, stats, light, controls, control, loader = new THREE.TextureLoader();
 var w = window.innerWidth, h = window.innerHeight;
+var g = 9.8;
 
 function init() {
 	renderer = new THREE.WebGLRenderer();
@@ -33,14 +34,14 @@ function init() {
 	scene = new THREE.Scene();
 	scene.add(new THREE.AxisHelper(200));
 	camera = new THREE.PerspectiveCamera(45, w/h, 0.1, 10000);
-	camera.position.set(0, 500, 0);
+	camera.position.set(0, 250, 500);
 	camera.lookAt(scene.position);
 
 	light = new THREE.SpotLight(0xffffff);
-	light.angle = 70;
+	light.angle = 45;
 	light.decay = 1.5;
 	//light.penumbra = 0.001;
-	light.position.set(0, 50, 0);
+	light.position.set(0, 500, 0);
 	scene.add(light);
 
 	addFloor();
@@ -48,14 +49,25 @@ function init() {
 	renderer.render(scene, camera);
 
 }
+/*
+ * 动作：球掉下来，点一下炸成小球/货物掉下来，点一下血光四射
+ * 地板：银色之类的
+ *
+ *
+ */
+function ball() {
+	this.x = x;
+	this.y = y;
+	this.z = z;
+
+	this.r = r;
+
+	this.life = 10;
+}
 
 function addFloor() {
-	var floorGeometry = new THREE.PlaneGeometry(400, 400, 40, 40);
-	var floorMaterial = new THREE.MeshPhongMaterial({
-	//bumpScale: 0,
-	//transparent: true,
-	//opacity: 1,
-	});
+	var floorGeometry = new THREE.PlaneGeometry(800, 800, 40, 40);
+	var floorMaterial = new THREE.MeshPhongMaterial();
 	/*normalMap 法向贴图*/
 	floorMaterial.map = loader.load('img/t1.jpg');
 	floorMaterial.map.wrapS = floorMaterial.map.wrapT = THREE.RepeatWrapping;
@@ -68,6 +80,10 @@ function addFloor() {
 	scene.add(floorMesh);
 }
 
+function mouseMove(e) {
+	console.log(e.clientX);
+}
+
 function render() {
 	renderer.render(scene, camera);
 	requestAnimationFrame(render);
@@ -77,5 +93,7 @@ window.onload = function() {
 	init();
 	render();
 }
+document.addEventListener('mousemove', mouseMove, false);
+
 
 

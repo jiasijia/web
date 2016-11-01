@@ -1,0 +1,22 @@
+su			切换用户
+sync 		强制把内存的数据写入到硬盘
+man(info)	在系统里查询帮助文档，比较详细，--help为命令自带的比较简短的参数说明
+shutdown    option 		time  			警告信息 (shutdown 会先停掉系统的服务再关机)
+		 -r 重启       -t/几秒后关机
+		 -h 关机 	    20:20
+		 -k 仅发送参数
+run-level(执行等级)	用init来切换   例如：init 0表示关机
+					level 0   关机
+					level 3   纯文本模式
+					level 5   图形接口模式
+					level 6   重新启动
+date 		日期
+cal			日历
+bc			计算器
+账号信息都记录在/etc/passwd里, 密码都记录在/etc/shadow里，组名都记录在/etc/group里
+chgrp		改变所属群组
+		-R 	递归更改
+chown		改变拥有者
+chmod		改变权限
+		777(rwx+rwx+rwx) 或者a-x,u-x,g-x,o-x(不知道原有权限的情况下进行的权限变更操作)
+		r-- 某用户具有用ls查询该目录列表的权限，但不能cd进入,能否进入目录是x来决定，目录的可执行权限就是能否进入
