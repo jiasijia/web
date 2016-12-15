@@ -7,22 +7,38 @@
 	<title>three</title>
 	<style>
 	body {margin: 0;}
-    /*svg  {
-        stroke-dasharray: 500;
-        stroke-dashoffset: 500;
-        scale: 2;
-        animation: dash 3s ease-in-out infinite alternate;
-    }*/
-    @keyframes dash {
-        to {
-            stroke-dashoffset: 0;
-        }
-    }
+	.text {
+		fill: none;
+		stroke-width: 2;
+		stroke-linejoin: round;
+		stroke-dasharray: 50 200;
+		stroke-dashoffset: 0;
+		font-size: 50px;
+		animation: stroke 6s linear infinite;
+	}
+	.text1 {
+		stroke: #F2385A;
+		animation-delay: -1.5s;
+	}
+	.text2 {
+		stroke: #F5A503;
+		animation-delay: -3s;
+	}
+	.text3 {
+		stroke: #56D9CD;
+		animation-delay: -4.5s;
+	}
+	@keyframes stroke {
+		100% {
+			stroke-dashoffset: -250;
+		}
+	}
+
 	</style>
 </head>
 <body>
-    <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="200px" y="100px"
-     viewBox="0 0 300 200" enable-background="new 0 0 152.5 63.5" xml:space="preserve">
+    <svg version="1.1" id="Layer_1"  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="200px" y="100px"
+     viewBox="0 0 500 500" enable-background="new 0 0 152.5 63.5" xml:space="preserve">
     <path id="i0" fill="none" stroke="#000000" d="M22.057,5.69c2.4,0,4.596,0.354,6.588,1.062s3.696,1.71,5.112,3.006
     c1.416,1.296,2.52,2.856,3.312,4.68c0.792,1.824,1.188,3.852,1.188,6.084c0,1.92-0.282,3.696-0.846,5.328
     c-0.564,1.632-1.32,3.192-2.268,4.68c-0.948,1.488-2.058,2.928-3.33,4.32c-1.272,1.393-2.604,2.808-3.996,4.248L16.081,51.086
@@ -44,18 +60,26 @@
     c3.75-8.36,13.875-20.485,13.875-20.485s8.875,8.5,9.25,18l0.875-9.5L135.5,42.5c-4.125-11.016-14.75-20-14.75-20
     s11.983-3.356,15.75-4.625C140.582,16.5,145.393,11.72,139,9c-5.721-2.434-21.506,13.375-21.506,13.375S107.375,11,99.375,8.712
     c-6.565-1.877-5.954,7.663-0.25,9.663S114.125,22.5,114.125,22.5z"/>
-	<text x="20" y="100" fill="none" stroke="#000000" style="font-size: 30px">海到尽头天做岸</text>
-	<text x="20" y="150" fill="none" stroke="#000000" style="font-size: 30px">山登绝顶我为峰</text>
+	<symbol id="s-text">
+		<text text-anchor="middle" x="50%" y="20%" dy="100px">
+			痛饮狂歌空度日
+		</text>
+	</symbol>
+	<use xlink:href="#s-text" class="text text1"></use>
+	<use xlink:href="#s-text" class="text text2"></use>
+	<use xlink:href="#s-text" class="text text3"></use>
+	<!-- <use xlink:href="#s-text" class="1text" style="font-size: 50px; fill: #000 stroke: #ccc; opacity: 1"></use> -->
     </svg>
 <script src="js1/svg.js"></script>
 <script>
 var current_frame = 0;
-var total_frames = 100;
-var path = new Array();
+var total_frames = 70;
+var path = document.querySelectorAll('path');
 var length = new Array();
-for(var i=0; i<4;i++){
+var rev = false;
+for(var i = 0; i < path.length;i++){
     path[i] = document.getElementById('i'+i);
-    l = path[i].getTotalLength();
+    l = path[i].getTotalLength() + 100;
     length[i] = l;
     path[i].style.strokeDasharray = l + ' ' + l;
     path[i].style.strokeDashoffset = l;
@@ -65,14 +89,21 @@ var handle = 0;
 var draw = function() {
     var progress = current_frame/total_frames;
     if (progress > 1) {
-        window.cancelAnimationFrame(handle);
-    } else {
-        current_frame++;
-        for(var j=0; j<path.length;j++){
-            path[j].style.strokeDashoffset = Math.floor(length[j] * (1 - progress));
-        }
-        handle = window.requestAnimationFrame(draw);
+		rev = true;
+		current_frame = total_frames;
+        //window.cancelAnimationFrame(handle);
     }
+
+	if (rev) {
+		current_frame--;
+	} else {
+		current_frame++;
+	}
+
+	for(var j=0; j<path.length;j++){
+		path[j].style.strokeDashoffset = Math.floor(length[j] * (1 - progress));
+	}
+	handle = window.requestAnimationFrame(draw);
 };
 draw();
 </script>
