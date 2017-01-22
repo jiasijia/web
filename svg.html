@@ -9,7 +9,7 @@
 	body {margin: 0;}
 	.text {
 		fill: none;
-		stroke-width: 2;
+		stroke-width: 1;
 		stroke-linejoin: round;
 		stroke-dasharray: 50 200;
 		stroke-dashoffset: 0;
@@ -22,10 +22,14 @@
 	}
 	.text2 {
 		stroke: #F5A503;
-		animation-delay: -3s;
+		animation-delay: -2.5;
 	}
 	.text3 {
 		stroke: #56D9CD;
+		animation-delay: -3.5s;
+	}
+	.text4 {
+		stroke: purple;
 		animation-delay: -4.5s;
 	}
 	@keyframes stroke {
@@ -60,6 +64,10 @@
     c3.75-8.36,13.875-20.485,13.875-20.485s8.875,8.5,9.25,18l0.875-9.5L135.5,42.5c-4.125-11.016-14.75-20-14.75-20
     s11.983-3.356,15.75-4.625C140.582,16.5,145.393,11.72,139,9c-5.721-2.434-21.506,13.375-21.506,13.375S107.375,11,99.375,8.712
     c-6.565-1.877-5.954,7.663-0.25,9.663S114.125,22.5,114.125,22.5z"/>
+	<path class="line1" fill="none" stroke="#CA171D" stroke-width="2"  d="M-16.991,889.258
+					c0,0,241.488-160.494,406.479-109.496c127.494,38.998,154.493,92.996,245.987,91.496c0,0,52.497,13.5,232.488-83.996
+					c164.334-51.121,230.986,70.496,368.98,92.996c137.991,22.498,185.989-87.514,293.983-110.504
+					c196.49-25.99,239.988,146.502,463.478,119.504"/>
 	<symbol id="s-text">
 		<text text-anchor="middle" x="50%" y="20%" dy="100px">
 			痛饮狂歌空度日
@@ -68,6 +76,7 @@
 	<use xlink:href="#s-text" class="text text1"></use>
 	<use xlink:href="#s-text" class="text text2"></use>
 	<use xlink:href="#s-text" class="text text3"></use>
+	<use xlink:href="#s-text" class="text text4"></use>
 	<!-- <use xlink:href="#s-text" class="1text" style="font-size: 50px; fill: #000 stroke: #ccc; opacity: 1"></use> -->
     </svg>
 <script src="js1/svg.js"></script>
