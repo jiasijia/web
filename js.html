@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="zh">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>three</title>
+	<style>
+	body {margin: 0;}
+	</style>
+</head>
+<body>
+
+</body>
+<script>
+function ListCode(val) {
+    this.val = val;
+    this.next = null;
+}
+var addTwoNumbers = function(l1, l2) {
+    var l3 = [], s = 0, ln1 = l1, ln2 = l2;
+    while (null !== ln1 || null !== ln2 || s > 0) {
+        var sum = (null === ln1 ? 0 : ln1.val) + (null === ln2 ? 0 : ln2.val) + s;
+
+        ln1 = null === ln1 ? null : ln1.next;
+        ln2 = null === ln2 ? null : ln2.next;
+        s = sum > 10 ? sum - 9 : 0;
+        l3.push(s > 0 ? s : sum);
+
+    }
+    return l3;
+};
+l1 = new ListCode(2);
+l1.next = new ListCode(4);
+l1.next.next= new ListCode(3);
+
+l2 = new ListCode(5);
+l2.next = new ListCode(6);
+l2.next.next= new ListCode(4);
+
+addTwoNumbers(l1, l2);
+</script>
+</html>

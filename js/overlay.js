@@ -27,12 +27,12 @@ function init() {
   stats.domElement.style.top = '0px';
   document.body.appendChild(stats.domElement);
 
-  renderer = new THREE.WebGLRenderer();
+  renderer = new THREE.WebGLRenderer({canvas: document.getElementById('canvas')});
   renderer.setSize(w, h);
   renderer.setClearColor(0x000000);
   renderer.autoClear = false;
   renderer.shadowMap.enabled = true;
-  document.body.appendChild(renderer.domElement);
+  //document.body.appendChild(renderer.domElement);
 
   perScene = new THREE.Scene();
   perCamera = new THREE.PerspectiveCamera(60, w/h, 0.1, 10000);
@@ -43,14 +43,21 @@ function init() {
 
   var sphere = new THREE.SphereGeometry(30, 10, 10);
   var sphereMesh = new THREE.Mesh(sphere, new THREE.MeshPhongMaterial({
-    //map: loader.load('img/t3.jpg'),
+    // map: loader.load('img/t3.jpg'),
     refractionRatio: 0.98,
-  }))  
+  }))
   sphereMesh.name = 'sphere';
   sphereMesh.position.set(100, 30, 0);
   sphereMesh.material.refractionRatio = 0.98;
   sphereMesh.castShadow = true;
   perScene.add(sphereMesh);
+  var cubeMesh = new THREE.Mesh(new THREE.BoxGeometry(100, 100, 100), new THREE.MeshLambertMaterial({
+      color: 'green',
+  }))
+  perScene.add(cubeMesh);
+
+  light = new THREE.AmbientLight();
+  perScene.add(light);
 
   /*影子*/
   //directionLightShadow();
@@ -59,28 +66,29 @@ function init() {
   /*纹理地板*/
   addFloor()
   /*用动态的canvas做纹理*/
-  canvasTexture();
+  //canvasTexture();
   /*用video做动态纹理*/
   //videoTexture();
   /*多种材质*/
-  multiMaterial();
+  //multiMaterial();
   /*反射*/
   //cubeMap();
   /*类太阳光*/
-  hemiLight()
+  //hemiLight()
   /*粒子*/
-  particles();
+  //particles();
   /*加载json模型*/
-  jsonLoader();
-  initControls();
-  render();
-  
+  //jsonLoader();
+  //initControls();
+  //render();
+  renderer.render(perScene, perCamera);
+
 }
 
 function jsonLoader() {
   var jLoader = new THREE.JSONLoader();
   jLoader.load('assets/model/car.js', function(geometry, materials) {
-    
+
     var material = new THREE.MultiMaterial(materials);
     car = new THREE.Mesh(geometry, material);
     car.name = 'car';
@@ -97,7 +105,7 @@ function particles() {
     transparent: true,
     blending: THREE.AdditiveBlending,
   });
-  
+
   var mesh = new THREE.Points(go, pm);
 
   mesh.position.set(0, 50, 0);
@@ -119,8 +127,8 @@ function particles() {
     v.y = v.dy;
     v.z = v.dz;*/
     var tween = new TWEEN.Tween({x:v.x, y:v.y, z:v.z}).to({
-      x:v.dx, 
-      y:v.dy, 
+      x:v.dx,
+      y:v.dy,
       z:v.dz
     }, 2000)
     .easing(TWEEN.Easing.Bounce.InOut)
@@ -238,7 +246,7 @@ function canvasTexture() {
   clock(canvas);
   canvas.width = 512
   canvas.height = 512;
-  
+
 
   var canvasMesh = new THREE.Mesh(new THREE.BoxGeometry(100, 100, 100),
     new THREE.MeshPhongMaterial({
@@ -271,8 +279,8 @@ function videoTexture() {
 
 function include(path) {
   var a=document.createElement("script");
-  a.type = "text/javascript"; 
-  a.src=path; 
+  a.type = "text/javascript";
+  a.src=path;
   var head=document.getElementsByTagName("head")[0];
   head.appendChild(a);
 }
@@ -325,8 +333,8 @@ function render() {
   }
 
   /*explode gemotery*/
-  var em = perScene.getObjectByName('pointMesh');
-  em.geometry.vertices.forEach(function(v) {
+  // var em = perScene.getObjectByName('pointMesh');
+  // em.geometry.vertices.forEach(function(v) {
     /*if (out) {
       v.x += (v.dx - v.x) / 10;
       v.y += (v.dy - v.y) / 10;
@@ -353,18 +361,18 @@ function render() {
       if (st > 60 * em.geometry.vertices.length) {
         out = true;
         st = 0;
-      } 
+      }
     }*/
 
 
 
-  })
+  // })
 
-  em.geometry.verticesNeedUpdate = true;
+  // em.geometry.verticesNeedUpdate = true;
 
-  perScene.getObjectByName('canvasMesh').material.map.needsUpdate = true;
+  // perScene.getObjectByName('canvasMesh').material.map.needsUpdate = true;
   //perScene.getObjectByName('videoMesh').material.map.needsUpdate = true;
-  perScene.getObjectByName('separateMaterialMesh').rotation.x +=0.01;
+  // perScene.getObjectByName('separateMaterialMesh').rotation.x +=0.01;
   //perScene.getObjectByName('lightCamera').updateProjectionMatrix();
 
   //perCamera.lookAt(s.position);

@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="zh">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>three</title>
+	<style>
+	body {margin: 0;}
+	</style>
+</head>
+<body>
+
+</body>
+<script>
+	function fibonacci(n) {
+		return n < 2 ? n : arguments.callee(n - 1) + arguments.callee(n - 2);	
+	}
+
+	console.log(fibonacci(36));
+</script>
+
+</html>
