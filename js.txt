@@ -43,8 +43,106 @@ array.push() 在数组尾部添加元素
 array.unshift()  在数组头部添加元素
 array.shift() 删除第一个元素
 array.pop() 删除最后一个元素
+检测数组 isArray();
+array.reverse() 反转排序
+array.sort()默认按升序排序
+array.sort(function(v1, v2) {
+	if (v1 < v2) {
+		return -1;
+	}
+	if (v1 == v2) {
+		return 0;
+	}
+	if (v1 > v2) {
+		return 1;
+	}
+}) //升序排序
+或者
+array.sort(function(v1, v2) {
+	return v1 - v2;
+})
+array.slice(start, end)返回两个项之间的新数组，不包括end,返回值是从数组中删除的所有项
+array_splice(起点，项数量，插入的项)
+删除：array_splice(0, 2), 删除数组中的前两项
+插入：array_splice(2, 0, 'a', 'b', 'c') 在2的位置上插入abc
+替换：array_splice(2, 1, 'a', 'b', 'c') 把2位置原来的1项删除，然后插入abc
+
+indexOf(项，索引)从索引开始查找项在数组中的位置 找不到时返回-1
+lastIndexOf()倒着查
+
+迭代方法：
+array.every(function(value, index,) {
+	return true;	
+}) 判断，如果每一项都返回true，则返回true  
+
+array.filter(function(v) {
+	return true	
+}) 过滤掉没返回true的项
+array.forEach()  循环数组，没有返回值
+array.map(function(v) {
+	return v * 2
+})  操作每一项
+array.some() 跟every类似，如果任意一项返回true，则返回true
+
+归并方法：
+values.reduce(function(prev, cur, index, array){
+	return prev + cur;
+})
+reduceRight 方向相反
+
+
+
+
 
 字符串截取函数
 slice(start, end) 如果参数为负数，加上字符串长度转为负数变为正值，就是倒着数，如果第一个参数等于大于第二个参数，返回空字符串
 substring(start,end ),如果参数为负数，会被转化为0,取其中较小的值为开始
 substr(start, length)
+
+
+
+
+
+
+
+js里访问变量有两种方式，按值和按引用，但是函数的参数传递只有按值传递，就是把函数外部的值复制一份给函数内部的参数
+错误：在局部作用域中修改的对象会在全局作用域里反映出来，说明函数是按引用传递的
+解释：
+function setName(obj) {
+	obj.name = 'Nicholas';
+	obj = new Object();
+	obj.name = 'Grey';
+}
+var obj = new Object();
+setName(obj);
+console.log(obj.name) // Nicholas
+在obj重新被赋值的情况下，外部变量的原始引用仍然没有变，所以就算是对象参数传递也是按值传递的
+
+typeof检测基本数据类型：String Boolean String  Number  Null，但是typeof null 会返回Object,typeof 正则表达式会返回object
+所以如果想检测某个引用类型的值得时候想知道它是什么类型的对象就用instance of 
+variable instanceof constructor Array/Object/RegExp
+
+基本数据类型占据固定大小的空间，因此保存在栈内存中，
+引用类型的值是对象，保存在堆内存中
+
+作用域链和执行环境
+每个函数都有自己的执行环境，当执行流进入一个函数时，函数的环境就会被推入一个环境栈中。在函数执行之后，栈将其环境弹出，把控制权返还给之前的执行环境。某个执行环境中的所有代码执行完毕后，保存在其中的所有变量和函数定义也随之销毁(全局执行环境直到应用程序结束：关闭浏览器才销毁)
+
+变量对象：执行环境中定义的所有变量和函数都保存在这个对象里，代码里无法访问，但是在后台解析的时候会用到
+
+作用域链：代码在一个环境中执行时，会创建变量对象的一个作用域链，用途是保证对执行环境有权访问的所有变量和函数的有序访问，作用域链的最前端始终是当前执行环境的变量对象
+如果这个环境是函数，则将其活动对象作为当前变量对象，活动对象在最开始只包含一个变量，即arguments对象（全局环境里不存在的），作用域链中的下一个对象来自包含环境，下一个对象来自下一个包含环境，全局执行环境始终都是作用域链中的最后一个对象
+
+延长作用域链：try catch 和witch都会在作用域的前端添加一个变量对象，对trycatch来说是抛出的错误对象的声明
+
+js没有块级作用域，在其他类C语言中，被花括号封闭的代码块都有自己的作用域（执行环境）包括：if else、for循环等，这意味着for语句初始化变量表达式所定义的变量会被添加到全局环境中
+
+使用var声明的变量会被添加到最接近的执行环境中，如果没有，会被自动添加到全局环境
+
+垃圾收集机制：
+
+标记清除：是目前主流的垃圾收集算法，这种算法的思想是给当前不使用的值加上标记，然后再回收其内存。
+
+引用计数：种算法的思想是跟踪记录所有值被引用的次数。JavaScript引擎目前都不再使用这种算法；但在 IE 中访问非原生 JavaScript 对象（如 DOM 元素）时，这种算法仍然可能会导致问题
+
+管理内存：将值设置为null解除其引用，这一做法适用于大多数全局变量和全局对象和属性，局部变量会在它们离开执行环境时自动解除
