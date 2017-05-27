@@ -39,5 +39,20 @@ l2.next = new ListCode(6);
 l2.next.next= new ListCode(4);
 
 addTwoNumbers(l1, l2);
+
+function New(foo, arguments) {
+    var f = {};
+    foo.apply(f);
+    f.__proto__ = foo.prototype;
+
+    return f;
+}
+
+var a = New(function(txt) {
+   this.name = 'xxxx',
+   this.txt = txt;
+});
+
+console.log(a);
 </script>
 </html>

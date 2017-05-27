@@ -1,4 +1,4 @@
-保留字：不能用做标识符，当前还没有任何特定的用途，但在将来可能被用作关键字
+	保留字：不能用做标识符，当前还没有任何特定的用途，但在将来可能被用作关键字
 五种基本数据类型：String Number Boolean Undefined Null 还有一种复杂数据类型 Object
 typeof null = object,如果定义的变量准备在将来用于保存对象，那么最好将该对象初始化为null
 undefined是派生自null的，所以他们的相等性测试要返回true  (null == undefined) //true
@@ -91,20 +91,6 @@ values.reduce(function(prev, cur, index, array){
 reduceRight 方向相反
 
 
-
-
-
-字符串截取函数
-slice(start, end) 如果参数为负数，加上字符串长度转为负数变为正值，就是倒着数，如果第一个参数等于大于第二个参数，返回空字符串
-substring(start,end ),如果参数为负数，会被转化为0,取其中较小的值为开始
-substr(start, length)
-
-
-
-
-
-
-
 js里访问变量有两种方式，按值和按引用，但是函数的参数传递只有按值传递，就是把函数外部的值复制一份给函数内部的参数
 错误：在局部作用域中修改的对象会在全局作用域里反映出来，说明函数是按引用传递的
 解释：
@@ -146,3 +132,72 @@ js没有块级作用域，在其他类C语言中，被花括号封闭的代码�
 引用计数：种算法的思想是跟踪记录所有值被引用的次数。JavaScript引擎目前都不再使用这种算法；但在 IE 中访问非原生 JavaScript 对象（如 DOM 元素）时，这种算法仍然可能会导致问题
 
 管理内存：将值设置为null解除其引用，这一做法适用于大多数全局变量和全局对象和属性，局部变量会在它们离开执行环境时自动解除
+
+正则对象：
+var reg = /cat/g  正则表达式字面量，会共享同一个RegExp实例，每次查找都是在上一次查找到的索引处开始查找(es5做出修改，每个字面量都是一个新的实例)
+var reg = new RegExp('cat', 'g') 使用构造函数创建，每一个都是一个新的实例
+matches = reg.exec(text) 返回一个数组
+
+
+函数对象
+使用不带圆括号的函数名是访问函数指针，而非调用函数
+arguments.callee() ，参数的函数
+foo.caller(),调用本函数的函数引用
+arguments.callee.caller
+
+apply() call() 实际上等于设置函数体内this对象的值,区别是使用call时传递的参数必须一一列出来,apply传递arguments或者数组参数
+bind  创建一个函数的实例，其this值会被绑定到传给bind()函数的值 
+
+基本包装类型
+Number
+num.toString(2)进制转换
+num.toFixed(2) 保留几位小数(标准实现范围为0到20位)
+num.toExponential(2) 指数表示法(e表示法) 1.0e+1
+num.toPrecision()
+
+String
+str.charAt(1) 返回1位置的字符
+str.charCodeAt(1) 返回1位置字符的编码
+str.concat('a', 'b'); 字符串拼接(更多情况下使用+号来拼接)
+字符串截取
+slice(start, end) 如果参数为负数，加上字符串长度转为负数变为正值，就是倒着数，如果第一个参数等于大于第二个参数，返回空字符串
+substring(start,end ),如果参数为负数，会被转化为0,取其中较小的值为开始
+substr(start, length)
+trim() 删除前置和后缀的空格
+toLowerCase()
+toUpperCase()
+
+字符串模式匹配
+str.match(pattern) 等同于pattern.exec(str)
+str.search(pattern)	 search()方法返回字符串中第一个匹配项的索引；如果没有找到匹配项，则返回-1。
+str.replace(pattern/string, string/function() {
+	return string;
+}) 字符串替换，第一个参数可以是一个RegExp对象或者一个字符串，字符串不会被转换成正则，如果第一个参数是字符串，那么只会替换字符串里第一个匹配的项，所以说如果想替换所有符合要求的字符串，第一个参数必须是正则表达式，而且得提供全局g标志
+str.replace(/ab.c*/g, string)
+
+在string里可以通过$n来引用捕获组示例
+var p = /(.at)/, str = 'cat,bat,dat,eat';
+str.replace(p, "word($1)") // word(cat),word(bat),word(dat),word(eat)======正则里必须使用括号分组，否则$1取不到值，只会原样输出
+
+“捕获组”是正则表达式中的概念，除了 JavaScript，在其他正则表达式的应用场景中也都是通用的。在正则表达式中，可以进行“分组”，用一对圆弧括号括起来的表达式就是一个分组分组之后可以将各组子表达式的匹配结果分别处理。
+str.split(string/pattern, xx) 第一个参数可以是字符串或者正则，第二个参数用来限定返回数组的大小
+示例
+str = 'red,blud,green,yellow';
+str.split(/[^\,]+/)//["", ",", ",", ",", ""]; 意思是以任何不是逗号的字符当分割字符串
+
+String.fromCharCode(104, 111, 105) 把字符编码转换成字符串
+
+
+单体内置对象
+
+Global对象
+encodeURI()/decodeURI(),通常编码整个URL，只替换空格
+encodeURIComponent()/decodeURIComponent(),通常编码查询参数，会使用对应的编码替换所有非字母数字字符i
+
+Math对象
+Math.E 自然对数的底数
+Math.max.apply(Math, values)(apply可以把需要传的所有参数都放到一个数组里)  //获取数组values的最大值
+Math.ceil()		向上取整
+Math.floor()	向下取整
+Math.round()    四舍五入
+Math.random()   Math.floor(Math.random * 10 + 2) 2到10之间的随机整数
