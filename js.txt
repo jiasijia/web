@@ -1,4 +1,4 @@
-保留字：不能用做标识符，当前还没有任何特定的用途，但在将来可能被用作关键字
+	保留字：不能用做标识符，当前还没有任何特定的用途，但在将来可能被用作关键字
 五种基本数据类型：String Number Boolean Undefined Null 还有一种复杂数据类型 Object
 typeof null = object,如果定义的变量准备在将来用于保存对象，那么最好将该对象初始化为null
 undefined是派生自null的，所以他们的相等性测试要返回true  (null == undefined) //true
@@ -34,3 +34,170 @@ var num2 = ++num + 1;
 var num3 = num + 1;
 如果前置num2 等于3，如果后置num2等于2; 而num3都是等于3；
 
+
+位操作符：
+在js中只有一种数字类型，就是64位双精度浮点型（即C语言中的double）。然而在js中还有另一种隐藏的数据类型，那就是32位有符号整型（即C语言中的int），只要对任何数字做位运算，JS内部都会将其转换成32位有符号整型。
+
+对于有符号的整数，32位的前31位用于表示整数的值，第32位表示数值的符号：0表示整数，1表示负数，这个表示符号的位叫做符号位
+array.push() 在数组尾部添加元素
+array.unshift()  在数组头部添加元素
+array.shift() 删除第一个元素
+array.pop() 删除最后一个元素
+检测数组 isArray();
+array.reverse() 反转排序
+array.sort()默认按升序排序
+array.sort(function(v1, v2) {
+	if (v1 < v2) {
+		return -1;
+	}
+	if (v1 == v2) {
+		return 0;
+	}
+	if (v1 > v2) {
+		return 1;
+	}
+}) //升序排序
+或者
+array.sort(function(v1, v2) {
+	return v1 - v2;
+})
+array.slice(start, end)返回两个项之间的新数组，不包括end,返回值是从数组中删除的所有项
+array_splice(起点，项数量，插入的项)
+删除：array_splice(0, 2), 删除数组中的前两项
+插入：array_splice(2, 0, 'a', 'b', 'c') 在2的位置上插入abc
+替换：array_splice(2, 1, 'a', 'b', 'c') 把2位置原来的1项删除，然后插入abc
+
+indexOf(项，索引)从索引开始查找项在数组中的位置 找不到时返回-1
+lastIndexOf()倒着查
+
+迭代方法：
+array.every(function(value, index,) {
+	return true;	
+}) 判断，如果每一项都返回true，则返回true  
+
+array.filter(function(v) {
+	return true	
+}) 过滤掉没返回true的项
+array.forEach()  循环数组，没有返回值
+array.map(function(v) {
+	return v * 2
+})  操作每一项
+array.some() 跟every类似，如果任意一项返回true，则返回true
+
+归并方法：
+values.reduce(function(prev, cur, index, array){
+	return prev + cur;
+})
+reduceRight 方向相反
+
+
+js里访问变量有两种方式，按值和按引用，但是函数的参数传递只有按值传递，就是把函数外部的值复制一份给函数内部的参数
+错误：在局部作用域中修改的对象会在全局作用域里反映出来，说明函数是按引用传递的
+解释：
+function setName(obj) {
+	obj.name = 'Nicholas';
+	obj = new Object();
+	obj.name = 'Grey';
+}
+var obj = new Object();
+setName(obj);
+console.log(obj.name) // Nicholas
+在obj重新被赋值的情况下，外部变量的原始引用仍然没有变，所以就算是对象参数传递也是按值传递的
+
+typeof检测基本数据类型：String Boolean String  Number  Null，但是typeof null 会返回Object,typeof 正则表达式会返回object
+所以如果想检测某个引用类型的值得时候想知道它是什么类型的对象就用instance of 
+variable instanceof constructor Array/Object/RegExp
+
+基本数据类型占据固定大小的空间，因此保存在栈内存中，
+引用类型的值是对象，保存在堆内存中
+
+作用域链和执行环境
+每个函数都有自己的执行环境，当执行流进入一个函数时，函数的环境就会被推入一个环境栈中。在函数执行之后，栈将其环境弹出，把控制权返还给之前的执行环境。某个执行环境中的所有代码执行完毕后，保存在其中的所有变量和函数定义也随之销毁(全局执行环境直到应用程序结束：关闭浏览器才销毁)
+
+变量对象：执行环境中定义的所有变量和函数都保存在这个对象里，代码里无法访问，但是在后台解析的时候会用到
+
+作用域链：代码在一个环境中执行时，会创建变量对象的一个作用域链，用途是保证对执行环境有权访问的所有变量和函数的有序访问，作用域链的最前端始终是当前执行环境的变量对象
+如果这个环境是函数，则将其活动对象作为当前变量对象，活动对象在最开始只包含一个变量，即arguments对象（全局环境里不存在的），作用域链中的下一个对象来自包含环境，下一个对象来自下一个包含环境，全局执行环境始终都是作用域链中的最后一个对象
+
+延长作用域链：try catch 和witch都会在作用域的前端添加一个变量对象，对trycatch来说是抛出的错误对象的声明
+
+js没有块级作用域，在其他类C语言中，被花括号封闭的代码块都有自己的作用域（执行环境）包括：if else、for循环等，这意味着for语句初始化变量表达式所定义的变量会被添加到全局环境中
+
+使用var声明的变量会被添加到最接近的执行环境中，如果没有，会被自动添加到全局环境
+
+垃圾收集机制：
+
+标记清除：是目前主流的垃圾收集算法，这种算法的思想是给当前不使用的值加上标记，然后再回收其内存。
+
+引用计数：种算法的思想是跟踪记录所有值被引用的次数。JavaScript引擎目前都不再使用这种算法；但在 IE 中访问非原生 JavaScript 对象（如 DOM 元素）时，这种算法仍然可能会导致问题
+
+管理内存：将值设置为null解除其引用，这一做法适用于大多数全局变量和全局对象和属性，局部变量会在它们离开执行环境时自动解除
+
+正则对象：
+var reg = /cat/g  正则表达式字面量，会共享同一个RegExp实例，每次查找都是在上一次查找到的索引处开始查找(es5做出修改，每个字面量都是一个新的实例)
+var reg = new RegExp('cat', 'g') 使用构造函数创建，每一个都是一个新的实例
+matches = reg.exec(text) 返回一个数组
+
+
+函数对象
+使用不带圆括号的函数名是访问函数指针，而非调用函数
+arguments.callee() ，参数的函数
+foo.caller(),调用本函数的函数引用
+arguments.callee.caller
+
+apply() call() 实际上等于设置函数体内this对象的值,区别是使用call时传递的参数必须一一列出来,apply传递arguments或者数组参数
+bind  创建一个函数的实例，其this值会被绑定到传给bind()函数的值 
+
+基本包装类型
+Number
+num.toString(2)进制转换
+num.toFixed(2) 保留几位小数(标准实现范围为0到20位)
+num.toExponential(2) 指数表示法(e表示法) 1.0e+1
+num.toPrecision()
+
+String
+str.charAt(1) 返回1位置的字符
+str.charCodeAt(1) 返回1位置字符的编码
+str.concat('a', 'b'); 字符串拼接(更多情况下使用+号来拼接)
+字符串截取
+slice(start, end) 如果参数为负数，加上字符串长度转为负数变为正值，就是倒着数，如果第一个参数等于大于第二个参数，返回空字符串
+substring(start,end ),如果参数为负数，会被转化为0,取其中较小的值为开始
+substr(start, length)
+trim() 删除前置和后缀的空格
+toLowerCase()
+toUpperCase()
+
+字符串模式匹配
+str.match(pattern) 等同于pattern.exec(str)
+str.search(pattern)	 search()方法返回字符串中第一个匹配项的索引；如果没有找到匹配项，则返回-1。
+str.replace(pattern/string, string/function() {
+	return string;
+}) 字符串替换，第一个参数可以是一个RegExp对象或者一个字符串，字符串不会被转换成正则，如果第一个参数是字符串，那么只会替换字符串里第一个匹配的项，所以说如果想替换所有符合要求的字符串，第一个参数必须是正则表达式，而且得提供全局g标志
+str.replace(/ab.c*/g, string)
+
+在string里可以通过$n来引用捕获组示例
+var p = /(.at)/, str = 'cat,bat,dat,eat';
+str.replace(p, "word($1)") // word(cat),word(bat),word(dat),word(eat)======正则里必须使用括号分组，否则$1取不到值，只会原样输出
+
+“捕获组”是正则表达式中的概念，除了 JavaScript，在其他正则表达式的应用场景中也都是通用的。在正则表达式中，可以进行“分组”，用一对圆弧括号括起来的表达式就是一个分组分组之后可以将各组子表达式的匹配结果分别处理。
+str.split(string/pattern, xx) 第一个参数可以是字符串或者正则，第二个参数用来限定返回数组的大小
+示例
+str = 'red,blud,green,yellow';
+str.split(/[^\,]+/)//["", ",", ",", ",", ""]; 意思是以任何不是逗号的字符当分割字符串
+
+String.fromCharCode(104, 111, 105) 把字符编码转换成字符串
+
+
+单体内置对象
+
+Global对象
+encodeURI()/decodeURI(),通常编码整个URL，只替换空格
+encodeURIComponent()/decodeURIComponent(),通常编码查询参数，会使用对应的编码替换所有非字母数字字符i
+
+Math对象
+Math.E 自然对数的底数
+Math.max.apply(Math, values)(apply可以把需要传的所有参数都放到一个数组里)  //获取数组values的最大值
+Math.ceil()		向上取整
+Math.floor()	向下取整
+Math.round()    四舍五入
+Math.random()   Math.floor(Math.random * 10 + 2) 2到10之间的随机整数
