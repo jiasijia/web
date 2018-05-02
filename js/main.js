@@ -110,7 +110,7 @@ Optzer.prototype = {
 		canvas.style.left = (window.innerWidth - cw) / 2;
 		canvas.style.top = (window.innerHeight - ch) / 2;
 
-		var gradient = ctx.createLinearGradient(0, 30, 0, 350);
+		var gradient = ctx.createLinearGradient(0, 0, 0, 5);
 		gradient.addColorStop(1, '#0f0');
 		gradient.addColorStop(0.7, '#ff0');
 		gradient.addColorStop(0, '#f00');
@@ -174,7 +174,7 @@ Optzer.prototype = {
 	},
 	init: function() {
 		this._prepareApi();
-		this._loadFile();
+		this._pickFile();
 	}
 }
 
@@ -194,4 +194,4 @@ Button.prototype.draw = function(ctx) {
 
 
 var opt = new Optzer();
-// opt.init();
+opt.init();
